@@ -1,0 +1,14 @@
+{
+  "files.exclude": {
+    ".next": true,
+    "**/bin": true,
+    "**/DS_Store": true,
+    "**/node_modules": true,
+    "**/.turbo": true,
+    "**/storybook-static": true,
+    "**/dist": true,
+    "**/vendor": true,
+    "bin": true,
+    "release": true
+  }
+}
