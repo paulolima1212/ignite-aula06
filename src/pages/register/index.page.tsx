@@ -6,6 +6,7 @@ import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/router'
 import { useEffect } from 'react'
+import { api } from '../../lib/axios'
 
 const formRegisterSchema = z.object({
   username: z
@@ -18,9 +19,6 @@ const formRegisterSchema = z.object({
   fullname: z
     .string()
     .min(4, { message: 'this field must have 4 characters' })
-    .regex(/^([a-z\\-]+)$/i, {
-      message: 'please create your username using only words',
-    })
     .transform((fullname) => fullname.toLowerCase()),
 })
 
@@ -38,7 +36,14 @@ export default function Register() {
   })
 
   async function handleFormRegisterSubmit(data: FormRegisterData) {
-    console.log(data)
+    try {
+      await api.post('/users', {
+        username: data.username,
+        name: data.fullname,
+      })
+    } catch (error) {
+      console.log(error.response.data.message)
+    }
   }
 
   useEffect(() => {
