@@ -6,6 +6,7 @@ import { TextInput, Button, Text } from '@ignite-ui/react'
 import { FieldError, Form } from './styles'
 import { ArrowRight } from 'phosphor-react'
 import { useForm } from 'react-hook-form'
+import { useRouter } from 'next/router'
 
 const userFormSchema = z.object({
   userName: z
@@ -28,7 +29,13 @@ export function ClaimUserNameForm() {
     resolver: zodResolver(userFormSchema),
   })
 
-  async function handleUserFormSubmit(data: UserFormData) {}
+  const router = useRouter()
+
+  async function handleUserFormSubmit(data: UserFormData) {
+    const { userName } = data
+
+    await router.push(`/register?username=${userName}`)
+  }
 
   return (
     <>
