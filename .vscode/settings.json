@@ -10,5 +10,6 @@
     "**/vendor": true,
     "bin": true,
     "release": true
-  }
+  },
+  "cSpell.words": ["fullname"]
 }
