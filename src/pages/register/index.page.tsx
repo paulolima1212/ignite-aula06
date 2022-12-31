@@ -42,6 +42,8 @@ export default function Register() {
         username: data.username,
         name: data.fullname,
       })
+
+      await router.push('/connect-schedule')
     } catch (error) {
       if (error instanceof AxiosError && error.response?.data?.message) {
         alert(error.response.data.message)

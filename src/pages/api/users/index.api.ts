@@ -1,3 +1,4 @@
+import { setCookie } from 'nookies'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { prisma } from '../../../lib/prisma'
 
@@ -26,9 +27,13 @@ export default async function handle(
       name,
       userName: username,
     },
-    select: {
-      name: true,
-    },
+  })
+
+  const daysExpiration = 60 * 60 * 24 * 7 //7 days
+
+  setCookie({ res }, '@ignitecall:userId', user.id, {
+    maxAge: daysExpiration,
+    path: '/',
   })
 
   return res.status(201).json(user)
