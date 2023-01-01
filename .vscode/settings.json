@@ -11,5 +11,5 @@
     "bin": true,
     "release": true
   },
-  "cSpell.words": ["fullname", "ignitecall"]
+  "cSpell.words": ["fullname", "ignitecall", "nextauth"]
 }

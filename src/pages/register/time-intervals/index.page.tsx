@@ -21,6 +21,9 @@ import { useFieldArray, useForm, Controller } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { getWeekDays } from '../../../utils/get-week-days'
+import { convertTimeStringInMinutes } from '../../../utils/convert-time-string-to-minutes'
+import { api } from '../../../lib/axios'
+import { useRouter } from 'next/router'
 
 const timeIntervalFormSchema = z.object({
   intervals: z
@@ -36,10 +39,31 @@ const timeIntervalFormSchema = z.object({
     .transform((intervals) => intervals.filter((interval) => interval.enabled))
     .refine((intervals) => intervals.length > 0, {
       message: 'You need select at last one day of the week.',
-    }),
+    })
+    .transform((intervals) => {
+      return intervals.map((interval) => {
+        return {
+          weekDay: interval.weekDay,
+          startTimeInMinutes: convertTimeStringInMinutes(interval.startTime),
+          endTimeInMinutes: convertTimeStringInMinutes(interval.endTime),
+        }
+      })
+    })
+    .refine(
+      (intervals) => {
+        return intervals.every(
+          (interval) =>
+            interval.endTimeInMinutes > interval.startTimeInMinutes + 60
+        )
+      },
+      {
+        message: 'The interval must be equal to or greater than 1 hour',
+      }
+    ),
 })
 
-type TimeIntervalFormData = z.infer<typeof timeIntervalFormSchema>
+type TimeIntervalFormInput = z.input<typeof timeIntervalFormSchema>
+type TimeIntervalFormOutput = z.output<typeof timeIntervalFormSchema>
 
 export default function TimeIntervals() {
   const {
@@ -48,7 +72,7 @@ export default function TimeIntervals() {
     control,
     watch,
     formState: { errors, isSubmitting },
-  } = useForm<TimeIntervalFormData>({
+  } = useForm<TimeIntervalFormInput>({
     defaultValues: {
       intervals: [
         { weekDay: 0, enabled: false, startTime: '08:00', endTime: '18:00' },
@@ -68,13 +92,21 @@ export default function TimeIntervals() {
     name: 'intervals',
   })
 
-  function handleFormIntervalSubmit(data: TimeIntervalFormData) {
-    console.log(data)
-  }
-
   const weekDays = getWeekDays()
 
   const intervals = watch('intervals')
+
+  const router = useRouter()
+
+  async function handleFormIntervalSubmit(data: any) {
+    const { intervals } = data as TimeIntervalFormOutput
+
+    await api.post('/users/time-intervals', {
+      intervals,
+    })
+
+    await router.push(`/register/update-profile`)
+  }
 
   return (
     <Container>

@@ -17,6 +17,10 @@ export default function ConnectSchedule() {
     await signIn('google')
   }
 
+  function handleNextStep() {
+    router.push('/register/time-intervals')
+  }
+
   return (
     <Container>
       <Header>
@@ -53,7 +57,7 @@ export default function ConnectSchedule() {
             authorized
           </AuthError>
         )}
-        <Button disabled={!isAuthenticated}>
+        <Button onClick={handleNextStep} disabled={!isAuthenticated}>
           Next step
           <ArrowRight />
         </Button>
