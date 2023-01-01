@@ -14,7 +14,7 @@ export default async function handle(
 
   const userExists = await prisma.user.findUnique({
     where: {
-      userName: username,
+      username: username,
     },
   })
 
@@ -25,7 +25,7 @@ export default async function handle(
   const user = await prisma.user.create({
     data: {
       name,
-      userName: username,
+      username,
     },
   })
 

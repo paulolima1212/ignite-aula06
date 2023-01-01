@@ -9,13 +9,13 @@ import { useForm } from 'react-hook-form'
 import { useRouter } from 'next/router'
 
 const userFormSchema = z.object({
-  userName: z
+  username: z
     .string()
     .min(4, { message: 'this field must have 4 characters' })
     .regex(/^([a-z\\-]+)$/i, {
       message: 'please create your username using only words',
     })
-    .transform((userName) => userName.toLowerCase()),
+    .transform((username) => username.toLowerCase()),
 })
 
 type UserFormData = z.infer<typeof userFormSchema>
@@ -32,16 +32,16 @@ export function ClaimUserNameForm() {
   const router = useRouter()
 
   async function handleUserFormSubmit(data: UserFormData) {
-    const { userName } = data
+    const { username } = data
 
-    await router.push(`/register?username=${userName}`)
+    await router.push(`/register?username=${username}`)
   }
 
   return (
     <>
       <Form as={'form'} onSubmit={handleSubmit(handleUserFormSubmit)}>
         <TextInput
-          {...register('userName')}
+          {...register('username')}
           size={'sm'}
           prefix='ignite.com/'
           placeholder='your-user'
@@ -53,7 +53,7 @@ export function ClaimUserNameForm() {
       </Form>
       <FieldError>
         <Text size={'sm'}>
-          {errors.userName ? errors.userName?.message : 'Fill your user-name'}
+          {errors.username ? errors.username?.message : 'Fill your user-name'}
         </Text>
       </FieldError>
     </>

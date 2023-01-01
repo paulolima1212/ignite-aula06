@@ -16,7 +16,7 @@ const formRegisterSchema = z.object({
     .regex(/^([a-z\\-]+)$/i, {
       message: 'please create your username using only words',
     })
-    .transform((userName) => userName.toLowerCase()),
+    .transform((username) => username.toLowerCase()),
   fullname: z
     .string()
     .min(4, { message: 'this field must have 4 characters' })
