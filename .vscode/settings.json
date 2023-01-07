@@ -11,5 +11,11 @@
     "bin": true,
     "release": true
   },
-  "cSpell.words": ["fullname", "ignitecall", "nextauth", "tanstack"]
+  "cSpell.words": [
+    "fullname",
+    "ignitecall",
+    "nextauth",
+    "schedulings",
+    "tanstack"
+  ]
 }
