@@ -4,18 +4,29 @@ import { CalendarBlank, Clock } from 'phosphor-react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
+import dayjs from 'dayjs'
+import { api } from '../../../../lib/axios'
+import { useRouter } from 'next/router'
 
 const confirmStepSchema = z.object({
   name: z
     .string()
     .min(3, { message: 'Please inform a name with 3 characters' }),
   email: z.string().email({ message: 'Please inform a valid email' }),
-  observation: z.string().nullable(),
+  observations: z.string().nullable(),
 })
 
 type ConfirmStepData = z.infer<typeof confirmStepSchema>
 
-export function ConfirmStep() {
+interface ConfirmStepProps {
+  schedulingDate: Date
+  handleClearSelectedDateTime: () => void
+}
+
+export function ConfirmStep({
+  schedulingDate,
+  handleClearSelectedDateTime,
+}: ConfirmStepProps) {
   const {
     register,
     handleSubmit,
@@ -24,20 +35,36 @@ export function ConfirmStep() {
     resolver: zodResolver(confirmStepSchema),
   })
 
-  function handleConfirmScheduling(data: ConfirmStepData) {
-    console.log(data)
+  const router = useRouter()
+
+  const username = router.query.username
+
+  async function handleConfirmScheduling(data: ConfirmStepData) {
+    const { name, email, observations } = data
+
+    await api.post(`/users/${username}/schedule`, {
+      name,
+      email,
+      observations,
+      date: schedulingDate,
+    })
+
+    await router.push(`/users/${username}`)
   }
+
+  const dateWithTime = dayjs(schedulingDate).format('DD[ of ]MMMM [ of ]YYYY')
+  const schedulingTime = dayjs(schedulingDate).format('HH:mm[h]')
 
   return (
     <ConfirmForm as={'form'} onSubmit={handleSubmit(handleConfirmScheduling)}>
       <FormHeader>
         <Text>
           <CalendarBlank />
-          22 September 2023
+          {dateWithTime}
         </Text>
         <Text>
           <Clock />
-          18:00h
+          {schedulingTime}
         </Text>
       </FormHeader>
       <label>
@@ -56,11 +83,15 @@ export function ConfirmStep() {
       </label>
       <label>
         <Text size={'sm'}>Observation</Text>
-        <TextArea {...register('observation')} />
+        <TextArea {...register('observations')} />
       </label>
 
       <FormActions>
-        <Button type='button' variant={'tertiary'}>
+        <Button
+          onClick={handleClearSelectedDateTime}
+          type='button'
+          variant={'tertiary'}
+        >
           Cancel
         </Button>
         <Button disabled={isSubmitting} type='submit'>
