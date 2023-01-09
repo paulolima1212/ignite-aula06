@@ -49,7 +49,7 @@ export function ConfirmStep({
       date: schedulingDate,
     })
 
-    await router.push(`/users/${username}`)
+    handleClearSelectedDateTime()
   }
 
   const dateWithTime = dayjs(schedulingDate).format('DD[ of ]MMMM [ of ]YYYY')
